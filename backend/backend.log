@@ -1,0 +1,277 @@
+INFO:     Started server process [21704]
+INFO:     Waiting for application startup.
+2026-03-16 11:13:08,333 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:08,334 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("reb_price_index")
+2026-03-16 11:13:08,335 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-16 11:13:08,349 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("reb_supply_demand")
+2026-03-16 11:13:08,349 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-16 11:13:08,356 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("kb_price_index")
+2026-03-16 11:13:08,356 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-16 11:13:08,364 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("kb_sentiment")
+2026-03-16 11:13:08,365 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-16 11:13:08,373 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("economy_index")
+2026-03-16 11:13:08,374 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-16 11:13:08,384 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("housing_supply")
+2026-03-16 11:13:08,387 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-16 11:13:08,403 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("scheduled_movein")
+2026-03-16 11:13:08,404 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-16 11:13:08,412 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("living_index")
+2026-03-16 11:13:08,412 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-16 11:13:08,418 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("bubble_index")
+2026-03-16 11:13:08,418 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-16 11:13:08,427 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2026-03-16 11:13:09,786 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:09,830 INFO sqlalchemy.engine.Engine SELECT kb_price_index.id, kb_price_index.survey_date, kb_price_index.region_code, kb_price_index.region_name, kb_price_index.price_type, kb_price_index.index_value, kb_price_index.weekly_change, kb_price_index.jeonse_ratio, kb_price_index.created_at 
+FROM kb_price_index 
+WHERE kb_price_index.region_code = ? AND kb_price_index.price_type = ? AND kb_price_index.survey_date >= ? ORDER BY kb_price_index.survey_date
+2026-03-16 11:13:09,830 INFO sqlalchemy.engine.Engine [generated in 0.00103s] ('0000', 'buy', '2021-03-22')
+2026-03-16 11:13:09,880 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:09,882 INFO sqlalchemy.engine.Engine SELECT kb_price_index.id, kb_price_index.survey_date, kb_price_index.region_code, kb_price_index.region_name, kb_price_index.price_type, kb_price_index.index_value, kb_price_index.weekly_change, kb_price_index.jeonse_ratio, kb_price_index.created_at 
+FROM kb_price_index 
+WHERE kb_price_index.region_code = ? AND kb_price_index.price_type = ? AND kb_price_index.survey_date >= ? ORDER BY kb_price_index.survey_date
+2026-03-16 11:13:09,882 INFO sqlalchemy.engine.Engine [cached since 0.05295s ago] ('0000', 'rent', '2021-03-22')
+2026-03-16 11:13:09,884 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:09,892 INFO sqlalchemy.engine.Engine SELECT kb_sentiment.id, kb_sentiment.survey_date, kb_sentiment.region_code, kb_sentiment.region_name, kb_sentiment.buyer_seller_index, kb_sentiment.jeonse_supply_index, kb_sentiment.created_at 
+FROM kb_sentiment 
+WHERE kb_sentiment.region_code = ? AND kb_sentiment.survey_date >= ? ORDER BY kb_sentiment.survey_date
+2026-03-16 11:13:09,893 INFO sqlalchemy.engine.Engine [generated in 0.00124s] ('0000', '2021-03-22')
+INFO:     127.0.0.1:62321 - "GET /api/v1/price-index/kb?region_code=0000&price_type=buy&days=1820 HTTP/1.1" 200 OK
+2026-03-16 11:13:09,908 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-16 11:13:09,909 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:09,922 INFO sqlalchemy.engine.Engine SELECT economy_index.id, economy_index.ref_date, economy_index.indicator, economy_index.value, economy_index.unit, economy_index.created_at 
+FROM economy_index JOIN (SELECT economy_index.indicator AS indicator, max(economy_index.ref_date) AS max_date 
+FROM economy_index GROUP BY economy_index.indicator) AS anon_1 ON economy_index.indicator = anon_1.indicator AND economy_index.ref_date = anon_1.max_date
+2026-03-16 11:13:09,923 INFO sqlalchemy.engine.Engine [generated in 0.00114s] ()
+2026-03-16 11:13:09,927 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:09,936 INFO sqlalchemy.engine.Engine SELECT living_index.id, living_index.ref_date, living_index.region_code, living_index.region_name, living_index.buy_index, living_index.rent_index, living_index.jeonse_ratio, living_index.conversion_rate, living_index.mortgage_rate, living_index.living_index, living_index.monthly_saving, living_index.created_at 
+FROM living_index JOIN (SELECT living_index.region_code AS region_code, max(living_index.ref_date) AS max_date 
+FROM living_index GROUP BY living_index.region_code) AS anon_1 ON living_index.region_code = anon_1.region_code AND living_index.ref_date = anon_1.max_date
+2026-03-16 11:13:09,936 INFO sqlalchemy.engine.Engine [generated in 0.00071s] ()
+INFO:     127.0.0.1:63325 - "GET /api/v1/price-index/kb?region_code=0000&price_type=rent&days=1820 HTTP/1.1" 200 OK
+2026-03-16 11:13:09,955 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:63329 - "GET /api/v1/economy/latest HTTP/1.1" 200 OK
+2026-03-16 11:13:09,965 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:63332 - "GET /api/v1/living-index/latest HTTP/1.1" 200 OK
+2026-03-16 11:13:09,970 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:63327 - "GET /api/v1/price-index/sentiment?region_code=0000&days=1820 HTTP/1.1" 200 OK
+2026-03-16 11:13:09,982 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:63334 - "GET /health HTTP/1.1" 200 OK
+2026-03-16 11:13:25,002 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:25,004 INFO sqlalchemy.engine.Engine SELECT kb_price_index.id, kb_price_index.survey_date, kb_price_index.region_code, kb_price_index.region_name, kb_price_index.price_type, kb_price_index.index_value, kb_price_index.weekly_change, kb_price_index.jeonse_ratio, kb_price_index.created_at 
+FROM kb_price_index 
+WHERE kb_price_index.region_code = ? AND kb_price_index.price_type = ? AND kb_price_index.survey_date >= ? ORDER BY kb_price_index.survey_date
+2026-03-16 11:13:25,006 INFO sqlalchemy.engine.Engine [cached since 15.18s ago] ('0000', 'buy', '2021-03-22')
+2026-03-16 11:13:25,020 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:25,022 INFO sqlalchemy.engine.Engine SELECT kb_price_index.id, kb_price_index.survey_date, kb_price_index.region_code, kb_price_index.region_name, kb_price_index.price_type, kb_price_index.index_value, kb_price_index.weekly_change, kb_price_index.jeonse_ratio, kb_price_index.created_at 
+FROM kb_price_index 
+WHERE kb_price_index.region_code = ? AND kb_price_index.price_type = ? AND kb_price_index.survey_date >= ? ORDER BY kb_price_index.survey_date
+2026-03-16 11:13:25,029 INFO sqlalchemy.engine.Engine [cached since 15.2s ago] ('0000', 'rent', '2021-03-22')
+2026-03-16 11:13:25,034 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:25,036 INFO sqlalchemy.engine.Engine SELECT kb_sentiment.id, kb_sentiment.survey_date, kb_sentiment.region_code, kb_sentiment.region_name, kb_sentiment.buyer_seller_index, kb_sentiment.jeonse_supply_index, kb_sentiment.created_at 
+FROM kb_sentiment 
+WHERE kb_sentiment.region_code = ? AND kb_sentiment.survey_date >= ? ORDER BY kb_sentiment.survey_date
+2026-03-16 11:13:25,036 INFO sqlalchemy.engine.Engine [cached since 15.14s ago] ('0000', '2021-03-22')
+2026-03-16 11:13:25,051 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:25,052 INFO sqlalchemy.engine.Engine SELECT economy_index.id, economy_index.ref_date, economy_index.indicator, economy_index.value, economy_index.unit, economy_index.created_at 
+FROM economy_index JOIN (SELECT economy_index.indicator AS indicator, max(economy_index.ref_date) AS max_date 
+FROM economy_index GROUP BY economy_index.indicator) AS anon_1 ON economy_index.indicator = anon_1.indicator AND economy_index.ref_date = anon_1.max_date
+2026-03-16 11:13:25,055 INFO sqlalchemy.engine.Engine [cached since 15.13s ago] ()
+2026-03-16 11:13:25,067 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:25,081 INFO sqlalchemy.engine.Engine SELECT living_index.id, living_index.ref_date, living_index.region_code, living_index.region_name, living_index.buy_index, living_index.rent_index, living_index.jeonse_ratio, living_index.conversion_rate, living_index.mortgage_rate, living_index.living_index, living_index.monthly_saving, living_index.created_at 
+FROM living_index JOIN (SELECT living_index.region_code AS region_code, max(living_index.ref_date) AS max_date 
+FROM living_index GROUP BY living_index.region_code) AS anon_1 ON living_index.region_code = anon_1.region_code AND living_index.ref_date = anon_1.max_date
+2026-03-16 11:13:25,082 INFO sqlalchemy.engine.Engine [cached since 15.15s ago] ()
+INFO:     127.0.0.1:55528 - "GET /api/v1/price-index/kb?region_code=0000&price_type=buy&days=1820 HTTP/1.1" 200 OK
+2026-03-16 11:13:25,116 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:55531 - "GET /api/v1/price-index/kb?region_code=0000&price_type=rent&days=1820 HTTP/1.1" 200 OK
+2026-03-16 11:13:25,146 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:55534 - "GET /api/v1/economy/latest HTTP/1.1" 200 OK
+2026-03-16 11:13:25,163 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:55532 - "GET /api/v1/price-index/sentiment?region_code=0000&days=1820 HTTP/1.1" 200 OK
+2026-03-16 11:13:25,179 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:55536 - "GET /api/v1/living-index/latest HTTP/1.1" 200 OK
+2026-03-16 11:13:25,188 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-16 11:13:49,726 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:49,730 INFO sqlalchemy.engine.Engine SELECT kb_price_index.id, kb_price_index.survey_date, kb_price_index.region_code, kb_price_index.region_name, kb_price_index.price_type, kb_price_index.index_value, kb_price_index.weekly_change, kb_price_index.jeonse_ratio, kb_price_index.created_at 
+FROM kb_price_index 
+WHERE kb_price_index.region_code = ? AND kb_price_index.price_type = ? AND kb_price_index.survey_date >= ? ORDER BY kb_price_index.survey_date
+2026-03-16 11:13:49,731 INFO sqlalchemy.engine.Engine [cached since 39.9s ago] ('0000', 'buy', '2021-03-22')
+2026-03-16 11:13:49,734 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:49,735 INFO sqlalchemy.engine.Engine SELECT kb_price_index.id, kb_price_index.survey_date, kb_price_index.region_code, kb_price_index.region_name, kb_price_index.price_type, kb_price_index.index_value, kb_price_index.weekly_change, kb_price_index.jeonse_ratio, kb_price_index.created_at 
+FROM kb_price_index 
+WHERE kb_price_index.region_code = ? AND kb_price_index.price_type = ? AND kb_price_index.survey_date >= ? ORDER BY kb_price_index.survey_date
+2026-03-16 11:13:49,736 INFO sqlalchemy.engine.Engine [cached since 39.91s ago] ('0000', 'rent', '2021-03-22')
+2026-03-16 11:13:49,748 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:49,749 INFO sqlalchemy.engine.Engine SELECT kb_sentiment.id, kb_sentiment.survey_date, kb_sentiment.region_code, kb_sentiment.region_name, kb_sentiment.buyer_seller_index, kb_sentiment.jeonse_supply_index, kb_sentiment.created_at 
+FROM kb_sentiment 
+WHERE kb_sentiment.region_code = ? AND kb_sentiment.survey_date >= ? ORDER BY kb_sentiment.survey_date
+2026-03-16 11:13:49,749 INFO sqlalchemy.engine.Engine [cached since 39.86s ago] ('0000', '2021-03-22')
+2026-03-16 11:13:49,752 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:49,753 INFO sqlalchemy.engine.Engine SELECT economy_index.id, economy_index.ref_date, economy_index.indicator, economy_index.value, economy_index.unit, economy_index.created_at 
+FROM economy_index JOIN (SELECT economy_index.indicator AS indicator, max(economy_index.ref_date) AS max_date 
+FROM economy_index GROUP BY economy_index.indicator) AS anon_1 ON economy_index.indicator = anon_1.indicator AND economy_index.ref_date = anon_1.max_date
+2026-03-16 11:13:49,754 INFO sqlalchemy.engine.Engine [cached since 39.83s ago] ()
+2026-03-16 11:13:49,762 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:13:49,763 INFO sqlalchemy.engine.Engine SELECT living_index.id, living_index.ref_date, living_index.region_code, living_index.region_name, living_index.buy_index, living_index.rent_index, living_index.jeonse_ratio, living_index.conversion_rate, living_index.mortgage_rate, living_index.living_index, living_index.monthly_saving, living_index.created_at 
+FROM living_index JOIN (SELECT living_index.region_code AS region_code, max(living_index.ref_date) AS max_date 
+FROM living_index GROUP BY living_index.region_code) AS anon_1 ON living_index.region_code = anon_1.region_code AND living_index.ref_date = anon_1.max_date
+2026-03-16 11:13:49,764 INFO sqlalchemy.engine.Engine [cached since 39.83s ago] ()
+INFO:     127.0.0.1:63210 - "GET /api/v1/price-index/kb?region_code=0000&price_type=rent&days=1820 HTTP/1.1" 200 OK
+2026-03-16 11:13:49,779 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:50333 - "GET /api/v1/price-index/kb?region_code=0000&price_type=buy&days=1820 HTTP/1.1" 200 OK
+2026-03-16 11:13:49,796 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:61938 - "GET /api/v1/economy/latest HTTP/1.1" 200 OK
+2026-03-16 11:13:49,807 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:61937 - "GET /api/v1/price-index/sentiment?region_code=0000&days=1820 HTTP/1.1" 200 OK
+2026-03-16 11:13:49,816 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:61939 - "GET /api/v1/living-index/latest HTTP/1.1" 200 OK
+2026-03-16 11:13:49,822 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-16 11:14:17,108 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:14:17,110 INFO sqlalchemy.engine.Engine SELECT kb_price_index.id, kb_price_index.survey_date, kb_price_index.region_code, kb_price_index.region_name, kb_price_index.price_type, kb_price_index.index_value, kb_price_index.weekly_change, kb_price_index.jeonse_ratio, kb_price_index.created_at 
+FROM kb_price_index 
+WHERE kb_price_index.region_code = ? AND kb_price_index.price_type = ? AND kb_price_index.survey_date >= ? ORDER BY kb_price_index.survey_date
+2026-03-16 11:14:17,111 INFO sqlalchemy.engine.Engine [cached since 67.28s ago] ('0000', 'buy', '2025-03-17')
+2026-03-16 11:14:17,119 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:14:17,121 INFO sqlalchemy.engine.Engine SELECT kb_price_index.id, kb_price_index.survey_date, kb_price_index.region_code, kb_price_index.region_name, kb_price_index.price_type, kb_price_index.index_value, kb_price_index.weekly_change, kb_price_index.jeonse_ratio, kb_price_index.created_at 
+FROM kb_price_index 
+WHERE kb_price_index.region_code = ? AND kb_price_index.price_type = ? AND kb_price_index.survey_date >= ? ORDER BY kb_price_index.survey_date
+2026-03-16 11:14:17,122 INFO sqlalchemy.engine.Engine [cached since 67.29s ago] ('0000', 'rent', '2025-03-17')
+INFO:     127.0.0.1:51120 - "GET /api/v1/price-index/kb?region_code=0000&price_type=buy&days=364 HTTP/1.1" 200 OK
+2026-03-16 11:14:17,134 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:51122 - "GET /api/v1/price-index/kb?region_code=0000&price_type=rent&days=364 HTTP/1.1" 200 OK
+2026-03-16 11:14:17,142 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-16 11:14:17,185 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:14:17,187 INFO sqlalchemy.engine.Engine SELECT kb_sentiment.id, kb_sentiment.survey_date, kb_sentiment.region_code, kb_sentiment.region_name, kb_sentiment.buyer_seller_index, kb_sentiment.jeonse_supply_index, kb_sentiment.created_at 
+FROM kb_sentiment 
+WHERE kb_sentiment.region_code = ? AND kb_sentiment.survey_date >= ? ORDER BY kb_sentiment.survey_date
+2026-03-16 11:14:17,187 INFO sqlalchemy.engine.Engine [cached since 67.3s ago] ('0000', '2025-03-17')
+INFO:     127.0.0.1:54176 - "GET /api/v1/price-index/sentiment?region_code=0000&days=364 HTTP/1.1" 200 OK
+2026-03-16 11:14:17,195 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-16 11:14:42,713 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:14:42,723 INFO sqlalchemy.engine.Engine SELECT kb_price_index.id, kb_price_index.survey_date, kb_price_index.region_code, kb_price_index.region_name, kb_price_index.price_type, kb_price_index.index_value, kb_price_index.weekly_change, kb_price_index.jeonse_ratio, kb_price_index.created_at 
+FROM kb_price_index 
+WHERE kb_price_index.region_code = ? AND kb_price_index.price_type = ? AND kb_price_index.survey_date >= ? ORDER BY kb_price_index.survey_date
+2026-03-16 11:14:42,726 INFO sqlalchemy.engine.Engine [cached since 92.9s ago] ('0000', 'buy', '2021-03-22')
+2026-03-16 11:14:42,777 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:14:42,778 INFO sqlalchemy.engine.Engine SELECT kb_price_index.id, kb_price_index.survey_date, kb_price_index.region_code, kb_price_index.region_name, kb_price_index.price_type, kb_price_index.index_value, kb_price_index.weekly_change, kb_price_index.jeonse_ratio, kb_price_index.created_at 
+FROM kb_price_index 
+WHERE kb_price_index.region_code = ? AND kb_price_index.price_type = ? AND kb_price_index.survey_date >= ? ORDER BY kb_price_index.survey_date
+2026-03-16 11:14:42,779 INFO sqlalchemy.engine.Engine [cached since 92.95s ago] ('0000', 'rent', '2021-03-22')
+2026-03-16 11:14:42,795 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:14:42,799 INFO sqlalchemy.engine.Engine SELECT kb_sentiment.id, kb_sentiment.survey_date, kb_sentiment.region_code, kb_sentiment.region_name, kb_sentiment.buyer_seller_index, kb_sentiment.jeonse_supply_index, kb_sentiment.created_at 
+FROM kb_sentiment 
+WHERE kb_sentiment.region_code = ? AND kb_sentiment.survey_date >= ? ORDER BY kb_sentiment.survey_date
+2026-03-16 11:14:42,800 INFO sqlalchemy.engine.Engine [cached since 92.91s ago] ('0000', '2021-03-22')
+INFO:     127.0.0.1:62009 - "GET /api/v1/price-index/kb?region_code=0000&price_type=buy&days=1820 HTTP/1.1" 200 OK
+2026-03-16 11:14:42,896 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62011 - "GET /api/v1/price-index/kb?region_code=0000&price_type=rent&days=1820 HTTP/1.1" 200 OK
+2026-03-16 11:14:42,994 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:62013 - "GET /api/v1/price-index/sentiment?region_code=0000&days=1820 HTTP/1.1" 200 OK
+2026-03-16 11:14:43,042 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-16 11:16:34,290 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:16:34,484 INFO sqlalchemy.engine.Engine SELECT economy_index.id, economy_index.ref_date, economy_index.indicator, economy_index.value, economy_index.unit, economy_index.created_at 
+FROM economy_index 
+WHERE economy_index.indicator = ? AND economy_index.ref_date >= ? ORDER BY economy_index.ref_date
+2026-03-16 11:16:34,484 INFO sqlalchemy.engine.Engine [generated in 0.01591s] ('base_rate', '2021-03-17')
+2026-03-16 11:16:34,498 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:16:34,500 INFO sqlalchemy.engine.Engine SELECT economy_index.id, economy_index.ref_date, economy_index.indicator, economy_index.value, economy_index.unit, economy_index.created_at 
+FROM economy_index 
+WHERE economy_index.indicator = ? AND economy_index.ref_date >= ? ORDER BY economy_index.ref_date
+2026-03-16 11:16:34,501 INFO sqlalchemy.engine.Engine [cached since 0.03222s ago] ('deposit_rate', '2021-03-17')
+2026-03-16 11:16:34,504 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:16:34,505 INFO sqlalchemy.engine.Engine SELECT economy_index.id, economy_index.ref_date, economy_index.indicator, economy_index.value, economy_index.unit, economy_index.created_at 
+FROM economy_index 
+WHERE economy_index.indicator = ? AND economy_index.ref_date >= ? ORDER BY economy_index.ref_date
+2026-03-16 11:16:34,507 INFO sqlalchemy.engine.Engine [cached since 0.03747s ago] ('mortgage_rate', '2021-03-17')
+2026-03-16 11:16:34,568 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:16:34,586 INFO sqlalchemy.engine.Engine SELECT economy_index.id, economy_index.ref_date, economy_index.indicator, economy_index.value, economy_index.unit, economy_index.created_at 
+FROM economy_index 
+WHERE economy_index.indicator = ? AND economy_index.ref_date >= ? ORDER BY economy_index.ref_date
+2026-03-16 11:16:34,586 INFO sqlalchemy.engine.Engine [cached since 0.1179s ago] ('bond_3y', '2021-03-17')
+2026-03-16 11:16:34,634 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:16:34,646 INFO sqlalchemy.engine.Engine SELECT economy_index.id, economy_index.ref_date, economy_index.indicator, economy_index.value, economy_index.unit, economy_index.created_at 
+FROM economy_index 
+WHERE economy_index.indicator = ? AND economy_index.ref_date >= ? ORDER BY economy_index.ref_date
+2026-03-16 11:16:34,647 INFO sqlalchemy.engine.Engine [cached since 0.1783s ago] ('household_loan', '2021-03-17')
+INFO:     127.0.0.1:57033 - "GET /api/v1/economy?indicator=base_rate&limit=60 HTTP/1.1" 200 OK
+2026-03-16 11:16:34,801 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:57037 - "GET /api/v1/economy?indicator=deposit_rate&limit=60 HTTP/1.1" 200 OK
+2026-03-16 11:16:34,852 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:57038 - "GET /api/v1/economy?indicator=mortgage_rate&limit=60 HTTP/1.1" 200 OK
+2026-03-16 11:16:34,868 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:57039 - "GET /api/v1/economy?indicator=bond_3y&limit=60 HTTP/1.1" 200 OK
+2026-03-16 11:16:34,881 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:57040 - "GET /api/v1/economy?indicator=household_loan&limit=60 HTTP/1.1" 200 OK
+2026-03-16 11:16:34,888 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-16 11:16:34,901 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:16:34,902 INFO sqlalchemy.engine.Engine SELECT economy_index.id, economy_index.ref_date, economy_index.indicator, economy_index.value, economy_index.unit, economy_index.created_at 
+FROM economy_index 
+WHERE economy_index.indicator = ? AND economy_index.ref_date >= ? ORDER BY economy_index.ref_date
+2026-03-16 11:16:34,903 INFO sqlalchemy.engine.Engine [cached since 0.4343s ago] ('household_delinquency', '2021-03-17')
+INFO:     127.0.0.1:57041 - "GET /api/v1/economy?indicator=household_delinquency&limit=60 HTTP/1.1" 200 OK
+2026-03-16 11:16:34,939 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-16 11:16:35,045 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:16:35,047 INFO sqlalchemy.engine.Engine SELECT economy_index.id, economy_index.ref_date, economy_index.indicator, economy_index.value, economy_index.unit, economy_index.created_at 
+FROM economy_index JOIN (SELECT economy_index.indicator AS indicator, max(economy_index.ref_date) AS max_date 
+FROM economy_index GROUP BY economy_index.indicator) AS anon_1 ON economy_index.indicator = anon_1.indicator AND economy_index.ref_date = anon_1.max_date
+2026-03-16 11:16:35,047 INFO sqlalchemy.engine.Engine [cached since 205.1s ago] ()
+INFO:     127.0.0.1:61039 - "GET /api/v1/economy/latest HTTP/1.1" 200 OK
+2026-03-16 11:16:35,067 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-16 11:16:44,885 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:16:45,134 INFO sqlalchemy.engine.Engine SELECT housing_supply.id, housing_supply.ref_date, housing_supply.region_code, housing_supply.region_name, housing_supply.data_type, housing_supply.value, housing_supply.created_at 
+FROM housing_supply 
+WHERE housing_supply.region_code = ? AND housing_supply.data_type = ? ORDER BY housing_supply.ref_date DESC
+ LIMIT ? OFFSET ?
+2026-03-16 11:16:45,136 INFO sqlalchemy.engine.Engine [generated in 0.00295s] ('0000', 'unsold', 24, 0)
+2026-03-16 11:16:45,183 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:16:45,185 INFO sqlalchemy.engine.Engine SELECT housing_supply.id, housing_supply.ref_date, housing_supply.region_code, housing_supply.region_name, housing_supply.data_type, housing_supply.value, housing_supply.created_at 
+FROM housing_supply 
+WHERE housing_supply.region_code = ? AND housing_supply.data_type = ? ORDER BY housing_supply.ref_date DESC
+ LIMIT ? OFFSET ?
+2026-03-16 11:16:45,188 INFO sqlalchemy.engine.Engine [cached since 0.05447s ago] ('0000', 'trade', 24, 0)
+2026-03-16 11:16:45,193 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:16:45,195 INFO sqlalchemy.engine.Engine SELECT housing_supply.id, housing_supply.ref_date, housing_supply.region_code, housing_supply.region_name, housing_supply.data_type, housing_supply.value, housing_supply.created_at 
+FROM housing_supply 
+WHERE housing_supply.region_code = ? AND housing_supply.data_type = ? ORDER BY housing_supply.ref_date DESC
+ LIMIT ? OFFSET ?
+2026-03-16 11:16:45,196 INFO sqlalchemy.engine.Engine [cached since 0.06257s ago] ('0000', 'permit', 24, 0)
+2026-03-16 11:16:45,205 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:16:45,212 INFO sqlalchemy.engine.Engine SELECT housing_supply.id, housing_supply.ref_date, housing_supply.region_code, housing_supply.region_name, housing_supply.data_type, housing_supply.value, housing_supply.created_at 
+FROM housing_supply 
+WHERE housing_supply.region_code = ? AND housing_supply.data_type = ? ORDER BY housing_supply.ref_date DESC
+ LIMIT ? OFFSET ?
+2026-03-16 11:16:45,212 INFO sqlalchemy.engine.Engine [cached since 0.07888s ago] ('0000', 'scheduled_movein', 12, 0)
+INFO:     127.0.0.1:61882 - "GET /api/v1/supply?region_code=0000&data_type=trade&limit=24 HTTP/1.1" 200 OK
+2026-03-16 11:16:45,224 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:61883 - "GET /api/v1/supply?region_code=0000&data_type=permit&limit=24 HTTP/1.1" 200 OK
+2026-03-16 11:16:45,234 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:61881 - "GET /api/v1/supply?region_code=0000&data_type=unsold&limit=24 HTTP/1.1" 200 OK
+2026-03-16 11:16:45,237 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:61885 - "GET /api/v1/supply?region_code=0000&data_type=scheduled_movein&limit=12 HTTP/1.1" 200 OK
+2026-03-16 11:16:45,254 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:61888 - "GET /api/v1/admin/status HTTP/1.1" 200 OK
+2026-03-16 11:26:27,905 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:26:27,969 INFO sqlalchemy.engine.Engine SELECT housing_supply.id, housing_supply.ref_date, housing_supply.region_code, housing_supply.region_name, housing_supply.data_type, housing_supply.value, housing_supply.created_at 
+FROM housing_supply 
+WHERE housing_supply.region_code = ? ORDER BY housing_supply.ref_date DESC
+ LIMIT ? OFFSET ?
+2026-03-16 11:26:27,974 INFO sqlalchemy.engine.Engine [generated in 0.00983s] ('0000', 3, 0)
+INFO:     127.0.0.1:64648 - "GET /api/v1/supply?region_code=0000&limit=3 HTTP/1.1" 200 OK
+2026-03-16 11:26:28,029 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-16 11:26:43,121 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:26:43,127 INFO sqlalchemy.engine.Engine SELECT kb_price_index.id, kb_price_index.survey_date, kb_price_index.region_code, kb_price_index.region_name, kb_price_index.price_type, kb_price_index.index_value, kb_price_index.weekly_change, kb_price_index.jeonse_ratio, kb_price_index.created_at 
+FROM kb_price_index 
+WHERE kb_price_index.region_code = ? AND kb_price_index.price_type = ? AND kb_price_index.survey_date >= ? ORDER BY kb_price_index.survey_date
+2026-03-16 11:26:43,129 INFO sqlalchemy.engine.Engine [cached since 813.3s ago] ('0000', 'buy', '2025-12-06')
+INFO:     127.0.0.1:55113 - "GET /api/v1/price-index/kb?region_code=0000&price_type=buy&days=100 HTTP/1.1" 200 OK
+2026-03-16 11:26:43,154 INFO sqlalchemy.engine.Engine ROLLBACK
+2026-03-16 11:26:54,271 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-16 11:26:54,277 INFO sqlalchemy.engine.Engine SELECT economy_index.id, economy_index.ref_date, economy_index.indicator, economy_index.value, economy_index.unit, economy_index.created_at 
+FROM economy_index JOIN (SELECT economy_index.indicator AS indicator, max(economy_index.ref_date) AS max_date 
+FROM economy_index GROUP BY economy_index.indicator) AS anon_1 ON economy_index.indicator = anon_1.indicator AND economy_index.ref_date = anon_1.max_date
+2026-03-16 11:26:54,279 INFO sqlalchemy.engine.Engine [cached since 824.4s ago] ()
+INFO:     127.0.0.1:55117 - "GET /api/v1/economy/latest HTTP/1.1" 200 OK
+2026-03-16 11:26:54,313 INFO sqlalchemy.engine.Engine ROLLBACK
+INFO:     127.0.0.1:55127 - "POST /api/v1/admin/trigger/kb HTTP/1.1" 200 OK
