@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import {
   fetchRebPriceIndex, fetchKbPriceIndex, fetchKbSentiment,
   fetchKbPriceRegions, fetchKbSentimentRegions,
-  fetchKbAvailableDates, fetchKbTopMovers, fetchKbSnapshot,
+  fetchKbAvailableDates, fetchKbTopMovers, fetchKbTopMoversRange, fetchKbSnapshot,
   fetchKbHeatmap, fetchKbChargingIndex,
   fetchLivingIndex, fetchLivingIndexLatest,
   fetchEconomy, fetchEconomyLatest,
@@ -103,6 +103,13 @@ export const useKbTopMovers = (priceType = 'buy', surveyDate?: string, limit = 1
   useQuery({
     queryKey: ['kb-top-movers', priceType, surveyDate, limit],
     queryFn: () => fetchKbTopMovers({ price_type: priceType, survey_date: surveyDate, limit }),
+  })
+
+export const useKbTopMoversRange = (priceType = 'buy', startDate: string, endDate: string, limit = 10) =>
+  useQuery({
+    queryKey: ['kb-top-movers-range', priceType, startDate, endDate, limit],
+    queryFn: () => fetchKbTopMoversRange({ price_type: priceType, start_date: startDate, end_date: endDate, limit }),
+    enabled: !!startDate && !!endDate,
   })
 
 export const useKbSnapshot = (priceType = 'buy', surveyDate?: string) =>

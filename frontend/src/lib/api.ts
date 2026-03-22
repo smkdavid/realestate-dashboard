@@ -51,6 +51,10 @@ export const fetchKbTopMovers = (params: {
   price_type?: string; survey_date?: string; limit?: number
 }) => api.get('/price-index/kb/top-movers', { params }).then(r => r.data)
 
+export const fetchKbTopMoversRange = (params: {
+  price_type?: string; start_date: string; end_date: string; limit?: number
+}) => api.get('/price-index/kb/top-movers-range', { params }).then(r => r.data)
+
 export const fetchKbSnapshot = (params: {
   price_type?: string; survey_date?: string
 }) => api.get('/price-index/kb/snapshot', { params }).then(r => r.data)

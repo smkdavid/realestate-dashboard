@@ -93,6 +93,71 @@ async def get_kb_top_movers(
     }
 
 
+@router.get("/kb/top-movers-range")
+async def get_kb_top_movers_range(
+    price_type: str = Query("buy"),
+    start_date: date = Query(...),
+    end_date: date = Query(...),
+    limit: int = Query(10),
+    db: AsyncSession = Depends(get_db),
+):
+    """기간 변동률 상위/하위 N개 지역 반환 (시작~종료 지수 기준)"""
+    # start_date에 가장 가까운 실제 날짜 찾기
+    start_q = await db.execute(
+        select(sa_func.min(KbPriceIndex.survey_date))
+        .where(and_(
+            KbPriceIndex.price_type == price_type,
+            KbPriceIndex.survey_date >= start_date,
+        ))
+    )
+    actual_start = start_q.scalar()
+
+    end_q = await db.execute(
+        select(sa_func.max(KbPriceIndex.survey_date))
+        .where(and_(
+            KbPriceIndex.price_type == price_type,
+            KbPriceIndex.survey_date <= end_date,
+        ))
+    )
+    actual_end = end_q.scalar()
+
+    if not actual_start or not actual_end or actual_start >= actual_end:
+        return {"start_date": None, "end_date": None, "rising": [], "falling": []}
+
+    start_res = await db.execute(
+        select(KbPriceIndex.region_code, KbPriceIndex.region_name, KbPriceIndex.index_value)
+        .where(and_(KbPriceIndex.price_type == price_type, KbPriceIndex.survey_date == actual_start))
+    )
+    end_res = await db.execute(
+        select(KbPriceIndex.region_code, KbPriceIndex.region_name, KbPriceIndex.index_value)
+        .where(and_(KbPriceIndex.price_type == price_type, KbPriceIndex.survey_date == actual_end))
+    )
+
+    start_map = {r.region_code: (r.region_name, r.index_value) for r in start_res.all()}
+    end_map = {r.region_code: (r.region_name, r.index_value) for r in end_res.all()}
+
+    results = []
+    for code, (name, end_val) in end_map.items():
+        if code in start_map and start_map[code][1] and end_val:
+            start_val = start_map[code][1]
+            change = (end_val - start_val) / start_val * 100
+            results.append({
+                "region_code": code,
+                "region_name": name,
+                "weekly_change": round(change, 4),
+                "index_value": round(end_val, 2),
+                "start_value": round(start_val, 2),
+            })
+
+    results.sort(key=lambda x: x["weekly_change"], reverse=True)
+    return {
+        "start_date": str(actual_start),
+        "end_date": str(actual_end),
+        "rising": results[:limit],
+        "falling": results[-limit:][::-1],
+    }
+
+
 @router.get("/kb/snapshot")
 async def get_kb_snapshot(
     price_type: str = Query("buy"),
