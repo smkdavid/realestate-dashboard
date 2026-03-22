@@ -6,15 +6,25 @@ import { Spinner } from '@/components/ui/spinner'
 import { useKbPriceIndex, useKbSentiment, useEconomyLatest, useLivingIndexLatest } from '@/hooks/useApi'
 import { fmt2, fmtDate } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { DateRangePicker, presetToParams } from '@/components/DateRangePicker'
 
 const SOURCE_KB = 'KB국민은행 리브온 (주간)'
 
 export default function Dashboard() {
   const [region, setRegion] = useState('0000')
+  const [preset, setPreset] = useState('260w')
+  const [startDate, setStartDate] = useState('2020-01-01')
+  const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 10))
 
-  const { data: buyData, isLoading: loadBuy } = useKbPriceIndex(region, 'buy', 260)
-  const { data: rentData } = useKbPriceIndex(region, 'rent', 260)
-  const { data: sentiment } = useKbSentiment(region, 260)
+  const params = presetToParams(preset, startDate, endDate)
+  const range = params.start_date && params.end_date
+    ? { startDate: params.start_date, endDate: params.end_date }
+    : undefined
+  const weeks = params.days ? Math.round(params.days / 7) : 260
+
+  const { data: buyData, isLoading: loadBuy } = useKbPriceIndex(region, 'buy', weeks, range)
+  const { data: rentData } = useKbPriceIndex(region, 'rent', weeks, range)
+  const { data: sentiment } = useKbSentiment(region, weeks, range)
   const { data: ecoLatest } = useEconomyLatest()
   const { data: livingLatest } = useLivingIndexLatest()
 
@@ -35,10 +45,18 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-bold">종합 대시보드</h1>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           <RegionSelector value={region} onChange={setRegion} />
+          <DateRangePicker
+            preset={preset}
+            onPresetChange={setPreset}
+            startDate={startDate}
+            endDate={endDate}
+            onStartChange={setStartDate}
+            onEndChange={setEndDate}
+          />
           {latestBuy && <span>기준: {fmtDate(latestBuy.date)}</span>}
         </div>
       </div>
