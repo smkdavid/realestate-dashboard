@@ -22,7 +22,7 @@ services:
       - key: ECOS_API_KEY
         value: S94WSHTRI7AMBSTW8TPV
       - key: CORS_ORIGINS
-        value: '["https://realestate-frontend.onrender.com","http://localhost:3000"]'
+        value: '["https://realestate-frontend-ew77.onrender.com","https://realestate-frontend.onrender.com","http://localhost:3000"]'
     healthCheckPath: /health
 
   - type: web
@@ -43,4 +43,4 @@ services:
       - key: NODE_VERSION
         value: "20"
       - key: VITE_API_BASE_URL
-        value: https://realestate-backend.onrender.com
+        value: https://realestate-backend-8kq2.onrender.com
