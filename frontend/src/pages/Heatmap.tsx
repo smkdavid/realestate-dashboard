@@ -77,14 +77,16 @@ export default function Heatmap() {
           {priceType === 'buy' ? '매매' : '전세'}지수 증감 히트맵
         </h1>
         <div className="flex items-center gap-2">
-          <select
-            value={priceType}
-            onChange={e => setPriceType(e.target.value as PriceType)}
-            className="rounded bg-card border border-border px-3 py-1.5 text-sm"
-          >
-            <option value="buy">매매</option>
-            <option value="rent">전세</option>
-          </select>
+          <div className="flex rounded border border-border overflow-hidden text-sm">
+            <button
+              onClick={() => setPriceType('buy')}
+              className={`px-4 py-1.5 ${priceType === 'buy' ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-accent'}`}
+            >매매</button>
+            <button
+              onClick={() => setPriceType('rent')}
+              className={`px-4 py-1.5 border-l border-border ${priceType === 'rent' ? 'bg-primary text-primary-foreground' : 'bg-card text-muted-foreground hover:bg-accent'}`}
+            >전세</button>
+          </div>
           <select
             value={months}
             onChange={e => setMonths(Number(e.target.value))}
@@ -115,7 +117,7 @@ export default function Heatmap() {
                     className="shrink-0 flex items-end justify-center pb-1 text-[10px] text-muted-foreground border-r border-border"
                     style={{ width: CELL_W, height: HEADER_H }}
                   >
-                    <span style={{ writingMode: 'vertical-rl', textOrientation: 'mixed', transform: 'rotate(180deg)' }}>
+                    <span style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}>
                       {regionNames[code]?.slice(0, 6)}
                     </span>
                   </div>
