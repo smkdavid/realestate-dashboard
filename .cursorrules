@@ -1,0 +1,27 @@
+# 부동산 대시보드 - .cursorrules
+## 프로젝트 개요
+한국 부동산(매매/전세) 데이터 시각화 대시보드.
+ECOS(한국은행) API, 공공데이터 API 연동.
+
+## 기술 스택
+- Backend: FastAPI (Python 3.11+), SQLite → PostgreSQL 예정
+- Frontend: React + TypeScript + Vite + TailwindCSS
+- 배포: Vercel (Frontend) + Cloud Run (Backend)
+- 데이터: ECOS API, 공공데이터포털
+
+## 코딩 규칙
+1. API 키는 `.env` 파일에만 저장 (절대 커밋 금지)
+2. Backend API는 `/api/v1/` 접두사 사용
+3. 지도 시각화: 시/구/동 단위 heatmap
+4. 비동기 처리: FastAPI async/await 사용
+5. 프론트엔드 상태관리: React Query 사용
+
+## 폴더 구조
+- `backend/app/` : FastAPI 라우터/서비스
+- `backend/ml/`  : 머신러닝 모델 (예측)
+- `frontend/src/` : React 컴포넌트
+
+## 환경 설정
+cp .env.example .env
+cd backend && pip install -r requirements.txt
+cd frontend && npm install && npm run dev

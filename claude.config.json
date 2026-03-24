@@ -1,0 +1,20 @@
+{
+  "project": "realestate-dashboard",
+  "description": "한국 부동산 매매/전세 데이터 시각화 대시보드",
+  "version": "1.0.0",
+  "defaultModel": "claude-3-5-sonnet-20241022",
+  "context": {
+    "language": ["python", "typescript"],
+    "framework": ["fastapi", "react", "vite"],
+    "database": "sqlite → postgresql",
+    "deployment": {"frontend": "vercel", "backend": "gcp-cloud-run"}
+  },
+  "guidelines": [
+    "ECOS API 호출은 backend/app/services/ecos.py 를 통해서만",
+    "지도 데이터는 metro_cells.json / national_cells.json 사용",
+    "환경변수(.env) 없이는 앱이 실행되지 않도록 early validation 추가",
+    "DB 쿼리는 SQLAlchemy ORM 사용 (raw SQL 지양)",
+    "ML 예측 모델은 backend/ml/ 에만 위치"
+  ],
+  "ignore": [".env", "*.db", "node_modules/", ".venv/", "dist/"]
+}
