@@ -1,5 +1,51 @@
+import os
+from pathlib import Path
 from pydantic_settings import BaseSettings
 from functools import lru_cache
+
+# ── 글로벌 .env 선택적 로드
+# 로컬 .env에 키가 있지만 값이 비어있을 때만 글로벌(Projects/.env)에서 채움
+# 로컬 .env에 키 자체가 없으면 글로벌에서 가져오지 않음 (프로젝트에 불필요한 키)
+try:
+    from dotenv import load_dotenv
+    _backend_dir = Path(__file__).resolve().parent.parent   # backend/
+    _local_env = _backend_dir / ".env"
+    load_dotenv(_local_env)                                 # 로컬 먼저 로드
+
+    # 로컬 .env에서 빈 값인 키 목록 수집
+    # 'KEY=' 또는 'KEY' (= 없이 키만 있는 경우) 모두 공란으로 처리
+    _empty_keys = set()
+    if _local_env.exists():
+        with open(_local_env, "r", encoding="utf-8") as _f:
+            for _line in _f:
+                _line = _line.strip()
+                if not _line or _line.startswith("#"):
+                    continue
+                if "=" in _line:
+                    _k, _v = _line.split("=", 1)
+                    if not _v.strip() and not os.environ.get(_k.strip()):
+                        _empty_keys.add(_k.strip())
+                else:
+                    # '=' 없이 키 이름만 있는 경우도 공란으로 간주
+                    _k = _line.strip()
+                    if _k and not os.environ.get(_k):
+                        _empty_keys.add(_k)
+
+    # 빈 키가 있을 때만 글로벌 .env에서 해당 키만 가져옴
+    if _empty_keys:
+        for _p in _backend_dir.parents:
+            _g = _p / ".env"
+            if _g.exists() and _g != _local_env:
+                with open(_g, "r", encoding="utf-8") as _f:
+                    for _line in _f:
+                        _line = _line.strip()
+                        if _line and not _line.startswith("#") and "=" in _line:
+                            _k, _v = _line.split("=", 1)
+                            if _k.strip() in _empty_keys and _v.strip():
+                                os.environ[_k.strip()] = _v.strip()
+                break
+except ImportError:
+    pass
 
 
 class Settings(BaseSettings):
